@@ -6,9 +6,7 @@ import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
-import com.github.retrooper.packetevents.wrapper.configuration.server.WrapperConfigServerDisconnect;
 import com.github.retrooper.packetevents.wrapper.login.server.WrapperLoginServerDisconnect;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDisconnect;
 import com.github.retrooper.packetevents.wrapper.status.server.WrapperStatusServerResponse;
 import com.google.gson.JsonObject;
 import net.kyori.adventure.text.Component;
@@ -71,29 +69,25 @@ public class PacketEventsListener extends PacketListenerAbstract {
                 event.markForReEncode(true);
                 break;
             case PacketType.Login.Server.DISCONNECT:
-                if (Bukkit.getServer().hasWhitelist()) { //all the checks at the beginning are probably useless
-                    if (event.getUser().getName() != null && Bukkit.getServer().getPlayer(event.getUser().getName()).isWhitelisted()) return;
+                WrapperLoginServerDisconnect dcPacket = new WrapperLoginServerDisconnect(event);
+                lastClientVersionIP.put( event.getUser().getAddress().getAddress().toString(), event.getUser().getClientVersion().getProtocolVersion() );
 
-                    WrapperLoginServerDisconnect dcPacket = new WrapperLoginServerDisconnect(event);
-                    lastClientVersionIP.put( event.getUser().getAddress().getAddress().toString(), event.getUser().getClientVersion().getProtocolVersion() );
-
-                    String kickedIP = event.getUser().getAddress().getAddress().toString();
-                    if (!serverVersionIP.containsKey(kickedIP)) {
-                        int kickedUserProtocol = event.getUser().getClientVersion().getProtocolVersion();
-                        serverVersionIP.put(kickedIP, pickRandomVersion(kickedUserProtocol));
-                        lastClientVersionIP.put(kickedIP, kickedUserProtocol);
-                    } else if ( lastClientVersionIP.get(kickedIP).equals(serverVersionIP.get(kickedIP)) ) {
-                        serverVersionIP.put(kickedIP, pickRandomVersion(event.getUser().getClientVersion().getProtocolVersion()));
-                    }
-
-                    String kickVer = ClientVersion.getById(serverVersionIP.get(kickedIP)).getReleaseName();
-                    String actualKickMessage = kickMessage.replace("{0}", kickVer);
-
-                    TextComponent textComponent = Component.text().content(actualKickMessage).build();
-                    dcPacket.setReason(textComponent);
-
-                    event.markForReEncode(true);
+                String kickedIP = event.getUser().getAddress().getAddress().toString();
+                if (!serverVersionIP.containsKey(kickedIP)) {
+                    int kickedUserProtocol = event.getUser().getClientVersion().getProtocolVersion();
+                    serverVersionIP.put(kickedIP, pickRandomVersion(kickedUserProtocol));
+                    lastClientVersionIP.put(kickedIP, kickedUserProtocol);
+                } else if ( lastClientVersionIP.get(kickedIP).equals(serverVersionIP.get(kickedIP)) ) {
+                    serverVersionIP.put(kickedIP, pickRandomVersion(event.getUser().getClientVersion().getProtocolVersion()));
                 }
+
+                String kickVer = ClientVersion.getById(serverVersionIP.get(kickedIP)).getReleaseName();
+                String actualKickMessage = kickMessage.replace("{0}", kickVer);
+
+                TextComponent textComponent = Component.text().content(actualKickMessage).build();
+                dcPacket.setReason(textComponent);
+
+                event.markForReEncode(true);
             default:
         }
     }
