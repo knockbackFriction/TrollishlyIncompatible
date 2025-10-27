@@ -1,0 +1,2 @@
+server-software: "Spigot"
+kick-message: "The server is running version {0}"

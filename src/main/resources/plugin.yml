@@ -1,0 +1,5 @@
+name: TrollishlyIncompatible
+version: '${version}'
+main: eu.caec.trollishlyincompatible.Main
+depend:
+  - packetevents
