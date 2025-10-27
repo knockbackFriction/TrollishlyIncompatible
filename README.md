@@ -1,6 +1,7 @@
 # TrollishlyIncompatible - Spigot plugin (requires PacketEvents)
-Trick (non-whitelisted) users into thinking they are using the wrong Minecraft version!
-And then, when they switch to the so-called ‘correct’ one, the server will claim it is running a different version: the cycle repeats itself over and over again.
+Trick (banned/non-whitelisted) users into thinking the server runs a different version!
+And then, when they switch their client version to the fake server one, the server will claim it is running a different version: the cycle repeats itself over and over again.
+- This overrides the disconnect message during login phase, effectively overriding You are banned/not whitelisted messages.
 ## Showcase
 https://github.com/user-attachments/assets/cc1377b0-f708-4d99-8024-e2f15bbc3835
 - The versions it cycles through are between 1.7.2 and the latest version supported by PacketEvents.
