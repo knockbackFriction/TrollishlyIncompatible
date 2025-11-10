@@ -14,8 +14,8 @@ import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class PacketEventsListener extends PacketListenerAbstract {
@@ -24,8 +24,8 @@ public class PacketEventsListener extends PacketListenerAbstract {
     String software = config.getString("server-software");
     String kickMessage = config.getString("kick-message");
 
-    Map<String, Integer> lastClientVersionIP = new HashMap<>();
-    Map<String, Integer> serverVersionIP = new HashMap<>();
+    Map<String, Integer> lastClientVersionIP = new ConcurrentHashMap<>();
+    Map<String, Integer> serverVersionIP = new ConcurrentHashMap<>();
 
     public int pickRandomVersion(int toAvoid) {
         ClientVersion clientVersion = ClientVersion.values()[ThreadLocalRandom.current().nextInt(ClientVersion.values().length)];
